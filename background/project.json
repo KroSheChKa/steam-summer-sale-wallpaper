@@ -1,0 +1,45 @@
+{
+  "title": "Pixel Timer Wallpaper",
+  "type": "web",
+  "file": "index.html",
+  "general": {
+    "fps": 30
+  },
+  "properties": {
+    "digitWidth": {
+      "type": "slider",
+      "value": 40,
+      "min": 1,
+      "max": 400,
+      "step": 1
+    },
+    "digitHeight": {
+      "type": "slider",
+      "value": 47,
+      "min": 1,
+      "max": 400,
+      "step": 1
+    },
+    "digitSpacing": {
+      "type": "slider",
+      "value": 4,
+      "min": 0,
+      "max": 100,
+      "step": 1
+    },
+    "posX": {
+      "type": "slider",
+      "value": 1720,
+      "min": 0,
+      "max": 3840,
+      "step": 1
+    },
+    "posY": {
+      "type": "slider",
+      "value": 720,
+      "min": 0,
+      "max": 2160,
+      "step": 1
+    }
+  }
+}
