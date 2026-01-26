@@ -3,43 +3,64 @@
   "type": "web",
   "file": "index.html",
   "general": {
-    "fps": 30
-  },
-  "properties": {
-    "digitWidth": {
-      "type": "slider",
-      "value": 40,
-      "min": 1,
-      "max": 400,
-      "step": 1
-    },
-    "digitHeight": {
-      "type": "slider",
-      "value": 47,
-      "min": 1,
-      "max": 400,
-      "step": 1
-    },
-    "digitSpacing": {
-      "type": "slider",
-      "value": 4,
-      "min": 0,
-      "max": 100,
-      "step": 1
-    },
-    "posX": {
-      "type": "slider",
-      "value": 1720,
-      "min": 0,
-      "max": 3840,
-      "step": 1
-    },
-    "posY": {
-      "type": "slider",
-      "value": 720,
-      "min": 0,
-      "max": 2160,
-      "step": 1
+    "fps": 30,
+    "properties": {
+      "digitWidth": {
+        "type": "slider",
+        "value": 75,
+        "min": 1,
+        "max": 400,
+        "step": 1
+      },
+      "digitHeight": {
+        "type": "slider",
+        "value": 88,
+        "min": 1,
+        "max": 400,
+        "step": 1
+      },
+      "digitSpacing": {
+        "type": "slider",
+        "value": 4,
+        "min": 0,
+        "max": 100,
+        "step": 1
+      },
+      "posX": {
+        "type": "slider",
+        "value": 1720,
+        "min": 0,
+        "max": 3840,
+        "step": 1
+      },
+      "posY": {
+        "type": "slider",
+        "value": 435,
+        "min": 0,
+        "max": 2160,
+        "step": 1
+      },
+      "bgOffsetX": {
+        "type": "slider",
+        "value": 84,
+        "min": -1000,
+        "max": 1000,
+        "step": 1
+      },
+      "bgOffsetY": {
+        "type": "slider",
+        "value": 0,
+        "min": -1000,
+        "max": 1000,
+        "step": 1
+      },
+      "blinkIntervalMs": {
+        "type": "slider",
+        "value": 600,
+        "min": 0,
+        "max": 2000,
+        "step": 50
+      }
     }
   }
 }

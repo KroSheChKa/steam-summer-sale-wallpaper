@@ -87,6 +87,8 @@ function scheduleUpdates() {
   }, msToNextMinute);
 }
 
+let blinkTimerId = null;
+
 function startColonBlink() {
   if (!colon) {
     return;
@@ -94,17 +96,57 @@ function startColonBlink() {
 
   if (settings.blinkIntervalMs <= 0) {
     colon.style.visibility = "visible";
+    if (blinkTimerId !== null) {
+      clearInterval(blinkTimerId);
+      blinkTimerId = null;
+    }
     return;
   }
 
   let visible = true;
   colon.style.visibility = "visible";
 
-  setInterval(() => {
+  if (blinkTimerId !== null) {
+    clearInterval(blinkTimerId);
+  }
+
+  blinkTimerId = setInterval(() => {
     visible = !visible;
     colon.style.visibility = visible ? "visible" : "hidden";
   }, settings.blinkIntervalMs);
 }
+
+window.wallpaperPropertyListener = {
+  applyUserProperties: (properties) => {
+    if (properties.digitWidth) {
+      settings.digitWidth = Math.max(1, properties.digitWidth.value);
+    }
+    if (properties.digitHeight) {
+      settings.digitHeight = Math.max(1, properties.digitHeight.value);
+    }
+    if (properties.digitSpacing) {
+      settings.digitSpacing = Math.max(0, properties.digitSpacing.value);
+    }
+    if (properties.posX) {
+      settings.posX = properties.posX.value;
+    }
+    if (properties.posY) {
+      settings.posY = properties.posY.value;
+    }
+    if (properties.bgOffsetX) {
+      settings.bgOffsetX = properties.bgOffsetX.value;
+    }
+    if (properties.bgOffsetY) {
+      settings.bgOffsetY = properties.bgOffsetY.value;
+    }
+    if (properties.blinkIntervalMs) {
+      settings.blinkIntervalMs = Math.max(0, properties.blinkIntervalMs.value);
+    }
+
+    applySettings();
+    startColonBlink();
+  },
+};
 
 applySettings();
 scheduleUpdates();
