@@ -1,0 +1,48 @@
+:root {
+  --digit-width: 40px;
+  --digit-height: 47px;
+  --digit-spacing: 4px;
+  --bg-offset-x: 0px;
+  --bg-offset-y: 0px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+#background {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: auto;
+  object-position: calc(50% + var(--bg-offset-x))
+    calc(50% + var(--bg-offset-y));
+}
+
+#timer {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: var(--digit-spacing);
+  pointer-events: none;
+}
+
+.glyph {
+  width: var(--digit-width);
+  height: var(--digit-height);
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+}
