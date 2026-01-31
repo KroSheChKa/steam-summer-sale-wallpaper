@@ -1,7 +1,9 @@
 :root {
-  --digit-width: 40px;
   --digit-height: 47px;
   --digit-spacing: 4px;
+  --small-height: 21px;
+  --small-spacing: 2px;
+  --small-space-width: 6px;
   --bg-offset-x: 0px;
   --bg-offset-y: 0px;
 }
@@ -38,11 +40,34 @@ body {
   pointer-events: none;
 }
 
+#date {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: var(--small-spacing);
+  pointer-events: none;
+}
+
 .glyph {
-  width: var(--digit-width);
+  width: auto;
   height: var(--digit-height);
   display: block;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   -ms-interpolation-mode: nearest-neighbor;
+}
+
+.small-glyph {
+  width: auto;
+  height: var(--small-height);
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+
+.space {
+  width: var(--small-space-width);
+  height: var(--small-height);
+  display: block;
 }

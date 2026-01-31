@@ -3,15 +3,8 @@
   "type": "web",
   "file": "index.html",
   "general": {
-    "fps": 30,
+    "fps": 10,
     "properties": {
-      "digitWidth": {
-        "type": "slider",
-        "value": 75,
-        "min": 1,
-        "max": 400,
-        "step": 1
-      },
       "digitHeight": {
         "type": "slider",
         "value": 88,
@@ -24,6 +17,41 @@
         "value": 4,
         "min": 0,
         "max": 100,
+        "step": 1
+      },
+      "smallHeight": {
+        "type": "slider",
+        "value": 40,
+        "min": 1,
+        "max": 200,
+        "step": 1
+      },
+      "smallSpacing": {
+        "type": "slider",
+        "value": 2,
+        "min": 0,
+        "max": 50,
+        "step": 1
+      },
+      "smallSpaceWidth": {
+        "type": "slider",
+        "value": 6,
+        "min": 0,
+        "max": 200,
+        "step": 1
+      },
+      "dateOffsetX": {
+        "type": "slider",
+        "value": 0,
+        "min": -1000,
+        "max": 1000,
+        "step": 1
+      },
+      "dateOffsetY": {
+        "type": "slider",
+        "value": 16,
+        "min": -1000,
+        "max": 1000,
         "step": 1
       },
       "posX": {
