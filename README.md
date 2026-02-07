@@ -4,6 +4,8 @@ A small HTML/CSS/JS live wallpaper with a pixel-style clock and date using custo
 
 https://github.com/user-attachments/assets/8394208e-9a31-4005-9cdb-e1c990e08fcb
 
+Steam workshop (Wallpaper engine) - https://steamcommunity.com/sharedfiles/filedetails/?id=3661347807
+
 ## What it does
 - Renders a background GIF and overlays a time/date display
 - Uses pixel glyphs for digits and letters
