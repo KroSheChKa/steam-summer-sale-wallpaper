@@ -91,6 +91,9 @@ const settings = {
   bgOffsetX: 84,
   bgOffsetY: 0,
   blinkIntervalMs: 600,
+  timeFormat24: true,
+  useLocalTime: true,
+  timeZoneOffsetHours: 0,
 };
 
 const h1 = document.getElementById("h1");
@@ -195,9 +198,28 @@ function positionDate() {
   dateContainer.style.top = `${top}px`;
 }
 
-function updateTimer() {
+function getCurrentDate() {
+  if (settings.useLocalTime) {
+    return new Date();
+  }
+
   const now = new Date();
-  const hours = now.getHours().toString().padStart(2, "0");
+  const utcMs = now.getTime() + now.getTimezoneOffset() * 60 * 1000;
+  const offsetMs = settings.timeZoneOffsetHours * 60 * 60 * 1000;
+  return new Date(utcMs + offsetMs);
+}
+
+function updateTimer() {
+  const now = getCurrentDate();
+  let hoursValue = now.getHours();
+  if (!settings.timeFormat24) {
+    hoursValue %= 12;
+    if (hoursValue === 0) {
+      hoursValue = 12;
+    }
+  }
+
+  const hours = hoursValue.toString().padStart(2, "0");
   const minutes = now.getMinutes().toString().padStart(2, "0");
 
   h1.src = DIGIT_PATHS[hours[0]];
@@ -213,7 +235,7 @@ function updateDate() {
     return;
   }
 
-  const now = new Date();
+  const now = getCurrentDate();
   const weekday = WEEKDAYS[now.getDay()];
   const month = MONTHS[now.getMonth()];
   const day = now.getDate().toString().padStart(2, "0");
@@ -333,8 +355,18 @@ window.wallpaperPropertyListener = {
     if (properties.blinkIntervalMs) {
       settings.blinkIntervalMs = Math.max(0, properties.blinkIntervalMs.value);
     }
+    if (properties.timeFormat24) {
+      settings.timeFormat24 = properties.timeFormat24.value;
+    }
+    if (properties.useLocalTime) {
+      settings.useLocalTime = properties.useLocalTime.value;
+    }
+    if (properties.timeZoneOffsetHours) {
+      settings.timeZoneOffsetHours = properties.timeZoneOffsetHours.value;
+    }
 
     applySettings();
+    updateTimer();
     updateDate();
     startColonBlink();
   },

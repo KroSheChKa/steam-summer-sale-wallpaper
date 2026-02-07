@@ -1,94 +1,188 @@
 {
-  "title": "Pixel Timer Wallpaper",
-  "type": "web",
-  "file": "index.html",
-  "general": {
-    "fps": 10,
-    "properties": {
-      "digitHeight": {
-        "type": "slider",
-        "value": 88,
-        "min": 1,
-        "max": 400,
-        "step": 1
-      },
-      "digitSpacing": {
-        "type": "slider",
-        "value": 4,
-        "min": 0,
-        "max": 100,
-        "step": 1
-      },
-      "smallHeight": {
-        "type": "slider",
-        "value": 40,
-        "min": 1,
-        "max": 200,
-        "step": 1
-      },
-      "smallSpacing": {
-        "type": "slider",
-        "value": 2,
-        "min": 0,
-        "max": 50,
-        "step": 1
-      },
-      "smallSpaceWidth": {
-        "type": "slider",
-        "value": 6,
-        "min": 0,
-        "max": 200,
-        "step": 1
-      },
-      "dateOffsetX": {
-        "type": "slider",
-        "value": 0,
-        "min": -1000,
-        "max": 1000,
-        "step": 1
-      },
-      "dateOffsetY": {
-        "type": "slider",
-        "value": 16,
-        "min": -1000,
-        "max": 1000,
-        "step": 1
-      },
-      "posX": {
-        "type": "slider",
-        "value": 1720,
-        "min": 0,
-        "max": 3840,
-        "step": 1
-      },
-      "posY": {
-        "type": "slider",
-        "value": 435,
-        "min": 0,
-        "max": 2160,
-        "step": 1
-      },
-      "bgOffsetX": {
-        "type": "slider",
-        "value": 84,
-        "min": -1000,
-        "max": 1000,
-        "step": 1
-      },
-      "bgOffsetY": {
-        "type": "slider",
-        "value": 0,
-        "min": -1000,
-        "max": 1000,
-        "step": 1
-      },
-      "blinkIntervalMs": {
-        "type": "slider",
-        "value": 600,
-        "min": 0,
-        "max": 2000,
-        "step": 50
-      }
-    }
-  }
+	"contentrating" : "Everyone",
+	"description" : "A small HTML/CSS/JS live wallpaper with a pixel-style clock and date using custom-made letters and digits.",
+	"file" : "index.html",
+	"general" : 
+	{
+		"fps" : 10,
+		"properties" : 
+		{
+			"bgOffsetX" : 
+			{
+				"index" : 1,
+				"max" : 1000,
+				"min" : -1000,
+				"order" : 101,
+				"step" : 1,
+				"text" : "bgOffsetX",
+				"type" : "slider",
+				"value" : 84
+			},
+			"bgOffsetY" : 
+			{
+				"index" : 2,
+				"max" : 1000,
+				"min" : -1000,
+				"order" : 102,
+				"step" : 1,
+				"text" : "bgOffsetY",
+				"type" : "slider",
+				"value" : 0
+			},
+			"blinkIntervalMs" : 
+			{
+				"index" : 0,
+				"max" : 2000,
+				"min" : 0,
+				"order" : 100,
+				"step" : 50,
+				"text" : "blinkIntervalMs",
+				"type" : "slider",
+				"value" : 600
+			},
+			"timeFormat24" : 
+			{
+				"index" : 12,
+				"order" : 112,
+				"text" : "24h format",
+				"type" : "bool",
+				"value" : true
+			},
+			"useLocalTime" : 
+			{
+				"index" : 13,
+				"order" : 113,
+				"text" : "Use local time",
+				"type" : "bool",
+				"value" : true
+			},
+			"timeZoneOffsetHours" : 
+			{
+				"index" : 14,
+				"max" : 14,
+				"min" : -12,
+				"order" : 114,
+				"step" : 1,
+				"text" : "GMT offset (GMT+/- hours)",
+				"type" : "slider",
+				"value" : 0
+			},
+			"dateOffsetX" : 
+			{
+				"index" : 3,
+				"max" : 1000,
+				"min" : -1000,
+				"order" : 103,
+				"step" : 1,
+				"text" : "dateOffsetX",
+				"type" : "slider",
+				"value" : 0
+			},
+			"dateOffsetY" : 
+			{
+				"index" : 4,
+				"max" : 1000,
+				"min" : -1000,
+				"order" : 104,
+				"step" : 1,
+				"text" : "dateOffsetY",
+				"type" : "slider",
+				"value" : 16
+			},
+			"digitHeight" : 
+			{
+				"index" : 5,
+				"max" : 400,
+				"min" : 1,
+				"order" : 105,
+				"step" : 1,
+				"text" : "digitHeight",
+				"type" : "slider",
+				"value" : 88
+			},
+			"digitSpacing" : 
+			{
+				"index" : 6,
+				"max" : 100,
+				"min" : 0,
+				"order" : 106,
+				"step" : 1,
+				"text" : "digitSpacing",
+				"type" : "slider",
+				"value" : 12
+			},
+			"posX" : 
+			{
+				"index" : 7,
+				"max" : 3840,
+				"min" : 0,
+				"order" : 107,
+				"step" : 1,
+				"text" : "posX",
+				"type" : "slider",
+				"value" : 1720
+			},
+			"posY" : 
+			{
+				"index" : 8,
+				"max" : 2160,
+				"min" : 0,
+				"order" : 108,
+				"step" : 1,
+				"text" : "posY",
+				"type" : "slider",
+				"value" : 400
+			},
+			"schemecolor" : 
+			{
+				"order" : 0,
+				"text" : "ui_browse_properties_scheme_color",
+				"type" : "color",
+				"value" : "0.4235294117647059 0.16470588235294117 0.17254901960784313"
+			},
+			"smallHeight" : 
+			{
+				"index" : 9,
+				"max" : 200,
+				"min" : 1,
+				"order" : 109,
+				"step" : 1,
+				"text" : "smallHeight",
+				"type" : "slider",
+				"value" : 40
+			},
+			"smallSpaceWidth" : 
+			{
+				"index" : 10,
+				"max" : 200,
+				"min" : 0,
+				"order" : 110,
+				"step" : 1,
+				"text" : "smallSpaceWidth",
+				"type" : "slider",
+				"value" : 6
+			},
+			"smallSpacing" : 
+			{
+				"index" : 11,
+				"max" : 50,
+				"min" : 0,
+				"order" : 111,
+				"step" : 1,
+				"text" : "smallSpacing",
+				"type" : "slider",
+				"value" : 2
+			}
+		}
+	},
+	"preview" : "preview.gif",
+	"ratingsex" : "none",
+	"ratingviolence" : "none",
+	"tags" : [ "Pixel art" ],
+	"title" : "Steam summer sale",
+	"type" : "web",
+	"version" : 1,
+	"visibility" : "public",
+	"workshopid" : "3661347807",
+	"workshopurl" : "steam://url/CommunityFilePage/3661347807"
 }
