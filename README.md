@@ -1,6 +1,6 @@
 # steam-summer-sale-wallpaper
 
-A small HTML/CSS/JS live wallpaper with a pixel-style clock and date using custom-made letters and digits.
+A live wallpaper with a pixel-style clock and date. Dedicated to Steam Summer Sale.
 
 https://github.com/user-attachments/assets/8394208e-9a31-4005-9cdb-e1c990e08fcb
 
@@ -21,8 +21,9 @@ Steam workshop (Wallpaper engine) - https://steamcommunity.com/sharedfiles/filed
 - [x] Pixel glyph date (weekday + month + day)
 - [x] Wallpaper Engine properties wiring
 - [x] Background image offset controls
+- [x] 12/24h time format toggle
+- [x] GMT offset and local time selection
 
 ## Ideas / To do
-- [ ] Add 12/24h toggle
 - [ ] Add color variants for the glyph set
 - [ ] Add quick presets for common resolutions
