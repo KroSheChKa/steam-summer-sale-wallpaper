@@ -94,13 +94,18 @@ const settings = {
   timeFormat24: true,
   useLocalTime: true,
   timeZoneOffsetHours: 0,
+  showSeconds: false,
 };
 
+const background = document.getElementById("background");
 const h1 = document.getElementById("h1");
 const h2 = document.getElementById("h2");
 const m1 = document.getElementById("m1");
 const m2 = document.getElementById("m2");
 const colon = document.getElementById("colon");
+const colon2 = document.getElementById("colon2");
+const s1 = document.getElementById("s1");
+const s2 = document.getElementById("s2");
 const timer = document.getElementById("timer");
 const dateContainer = document.getElementById("date");
 
@@ -134,11 +139,13 @@ function applySettings() {
     `${settings.bgOffsetY}px`
   );
 
+  schedulePositionBackground();
   schedulePositionTimer();
   schedulePositionDate();
 }
 
 let positionRaf = null;
+let backgroundRaf = null;
 
 function schedulePositionTimer() {
   if (positionRaf !== null) {
@@ -163,6 +170,45 @@ function positionTimer() {
 
   timer.style.left = `${left}px`;
   timer.style.top = `${top}px`;
+}
+
+function schedulePositionBackground() {
+  if (!background) {
+    return;
+  }
+
+  if (backgroundRaf !== null) {
+    cancelAnimationFrame(backgroundRaf);
+  }
+
+  backgroundRaf = requestAnimationFrame(() => {
+    backgroundRaf = null;
+    positionBackground();
+  });
+}
+
+function positionBackground() {
+  if (!background) {
+    return;
+  }
+
+  const naturalWidth = background.naturalWidth;
+  const naturalHeight = background.naturalHeight;
+  if (!naturalWidth || !naturalHeight) {
+    schedulePositionBackground();
+    return;
+  }
+
+  const scale = window.innerHeight / naturalHeight;
+  const scaledWidth = Math.round(naturalWidth * scale);
+  const scaledHeight = Math.round(naturalHeight * scale);
+  const left = Math.round((window.innerWidth - scaledWidth) / 2 + settings.bgOffsetX);
+  const top = Math.round((window.innerHeight - scaledHeight) / 2 + settings.bgOffsetY);
+
+  background.style.width = `${scaledWidth}px`;
+  background.style.height = `${scaledHeight}px`;
+  background.style.left = `${left}px`;
+  background.style.top = `${top}px`;
 }
 
 let datePositionRaf = null;
@@ -221,11 +267,36 @@ function updateTimer() {
 
   const hours = hoursValue.toString().padStart(2, "0");
   const minutes = now.getMinutes().toString().padStart(2, "0");
+  const seconds = now.getSeconds().toString().padStart(2, "0");
 
   h1.src = DIGIT_PATHS[hours[0]];
   h2.src = DIGIT_PATHS[hours[1]];
   m1.src = DIGIT_PATHS[minutes[0]];
   m2.src = DIGIT_PATHS[minutes[1]];
+
+  if (settings.showSeconds) {
+    if (colon2) {
+      colon2.style.display = "";
+    }
+    if (s1) {
+      s1.style.display = "";
+      s1.src = DIGIT_PATHS[seconds[0]];
+    }
+    if (s2) {
+      s2.style.display = "";
+      s2.src = DIGIT_PATHS[seconds[1]];
+    }
+  } else {
+    if (colon2) {
+      colon2.style.display = "none";
+    }
+    if (s1) {
+      s1.style.display = "none";
+    }
+    if (s2) {
+      s2.style.display = "none";
+    }
+  }
 
   schedulePositionTimer();
 }
@@ -270,18 +341,51 @@ function updateDate() {
   schedulePositionDate();
 }
 
+let updateTimeoutId = null;
+let updateIntervalId = null;
+
+function clearUpdateTimers() {
+  if (updateTimeoutId !== null) {
+    clearTimeout(updateTimeoutId);
+    updateTimeoutId = null;
+  }
+  if (updateIntervalId !== null) {
+    clearInterval(updateIntervalId);
+    updateIntervalId = null;
+  }
+}
+
 function scheduleUpdates() {
+  clearUpdateTimers();
+
   updateTimer();
   updateDate();
 
-  const now = new Date();
+  const now = getCurrentDate();
+  if (settings.showSeconds) {
+    const msToNextSecond = 1000 - now.getMilliseconds();
+    updateTimeoutId = setTimeout(() => {
+      updateTimer();
+      if (getCurrentDate().getSeconds() === 0) {
+        updateDate();
+      }
+      updateIntervalId = setInterval(() => {
+        updateTimer();
+        if (getCurrentDate().getSeconds() === 0) {
+          updateDate();
+        }
+      }, 1000);
+    }, msToNextSecond);
+    return;
+  }
+
   const msToNextMinute =
     (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
 
-  setTimeout(() => {
+  updateTimeoutId = setTimeout(() => {
     updateTimer();
     updateDate();
-    setInterval(() => {
+    updateIntervalId = setInterval(() => {
       updateTimer();
       updateDate();
     }, 60 * 1000);
@@ -297,6 +401,9 @@ function startColonBlink() {
 
   if (settings.blinkIntervalMs <= 0) {
     colon.style.visibility = "visible";
+    if (colon2) {
+      colon2.style.visibility = "visible";
+    }
     if (blinkTimerId !== null) {
       clearInterval(blinkTimerId);
       blinkTimerId = null;
@@ -306,6 +413,9 @@ function startColonBlink() {
 
   let visible = true;
   colon.style.visibility = "visible";
+  if (colon2) {
+    colon2.style.visibility = "visible";
+  }
 
   if (blinkTimerId !== null) {
     clearInterval(blinkTimerId);
@@ -314,6 +424,9 @@ function startColonBlink() {
   blinkTimerId = setInterval(() => {
     visible = !visible;
     colon.style.visibility = visible ? "visible" : "hidden";
+    if (colon2) {
+      colon2.style.visibility = visible ? "visible" : "hidden";
+    }
   }, settings.blinkIntervalMs);
 }
 
@@ -364,11 +477,15 @@ window.wallpaperPropertyListener = {
     if (properties.timeZoneOffsetHours) {
       settings.timeZoneOffsetHours = properties.timeZoneOffsetHours.value;
     }
+    if (properties.showSeconds) {
+      settings.showSeconds = properties.showSeconds.value;
+    }
 
     applySettings();
     updateTimer();
     updateDate();
     startColonBlink();
+    scheduleUpdates();
   },
 };
 
@@ -376,9 +493,17 @@ applySettings();
 scheduleUpdates();
 startColonBlink();
 
-[h1, h2, m1, m2, colon].forEach((img) => {
+[h1, h2, m1, m2, colon, colon2, s1, s2].forEach((img) => {
+  if (!img) {
+    return;
+  }
   img.addEventListener("load", schedulePositionTimer);
 });
 
+if (background) {
+  background.addEventListener("load", schedulePositionBackground);
+}
+
 window.addEventListener("resize", schedulePositionTimer);
 window.addEventListener("resize", schedulePositionDate);
+window.addEventListener("resize", schedulePositionBackground);

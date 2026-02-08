@@ -17,13 +17,14 @@ Steam workshop (Wallpaper engine) - https://steamcommunity.com/sharedfiles/filed
 
 ## Checklist
 - [x] Base HTML/CSS layout
-- [x] Pixel glyph timer (HH:MM)
+- [x] Pixel glyph timer (HH:MM) or (HH:MM:SS)
 - [x] Pixel glyph date (weekday + month + day)
 - [x] Wallpaper Engine properties wiring
 - [x] Background image offset controls
 - [x] 12/24h time format toggle
 - [x] GMT offset and local time selection
+- [x] Optional seconds with synced double-colon blink
+- [x] Pixel-perfect background scaling from original GIF
 
 ## Ideas / To do
 - [ ] Add color variants for the glyph set
-- [ ] Add quick presets for common resolutions
