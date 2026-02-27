@@ -28,3 +28,4 @@ Steam workshop (Wallpaper engine) - https://steamcommunity.com/sharedfiles/filed
 
 ## Ideas / To do
 - [ ] Add color variants for the glyph set
+- [ ] Set dynamic default values for the height, width and position of the letters and background
