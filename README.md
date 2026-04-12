@@ -9,7 +9,7 @@ Steam workshop (Wallpaper engine) - https://steamcommunity.com/sharedfiles/filed
 ## What it does
 - Renders a background GIF and overlays a time/date display
 - Uses pixel glyphs for digits and letters
-- Audio-reactive spectrum equalizer (7+7 bars, left/right channels)
+- Audio-reactive spectrum equalizer (12+12 bars, unified mono spectrum)
 - Exposes slider settings for positioning, sizes, time format, timezone, and equalizer
 
 ## Run locally
@@ -27,7 +27,7 @@ Steam workshop (Wallpaper engine) - https://steamcommunity.com/sharedfiles/filed
 - [x] Optional seconds with synced double-colon blink
 - [x] Pixel-perfect background scaling from original GIF
 - [x] Auto-relative layout scaling from the `3440x1440` reference setup
-- [x] Audio spectrum equalizer (7+7 bars, left/right channels)
+- [x] Audio spectrum equalizer (12+12 unified mono bars with running peak normalization)
 
 ## Ideas / To do
 - [ ] Add color variants for the glyph set

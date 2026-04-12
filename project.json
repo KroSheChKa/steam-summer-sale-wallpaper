@@ -189,17 +189,6 @@
 				"type" : "bool",
 				"value" : true
 			},
-			"eqBarHeight" : 
-			{
-				"index" : 17,
-				"max" : 200,
-				"min" : 1,
-				"order" : 121,
-				"step" : 1,
-				"text" : "EQ bar height",
-				"type" : "slider",
-				"value" : 40
-			},
 			"eqBarSpacing" : 
 			{
 				"index" : 18,

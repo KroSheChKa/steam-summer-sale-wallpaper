@@ -6,7 +6,6 @@
   --small-space-width: 6px;
   --bg-offset-x: 0px;
   --bg-offset-y: 0px;
-  --eq-bar-height: 40px;
   --eq-bar-spacing: 2px;
 }
 
@@ -82,7 +81,7 @@ body {
 
 .eq-bar {
   width: auto;
-  height: var(--eq-bar-height);
+  height: var(--digit-height);
   display: block;
   image-rendering: pixelated;
   image-rendering: crisp-edges;

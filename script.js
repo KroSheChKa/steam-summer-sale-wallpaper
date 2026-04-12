@@ -63,7 +63,8 @@ const BAR_PATHS = {
   7: "assets/spectrum_bars/7.png",
 };
 
-const EQ_BAR_COUNT = 7;
+const EQ_BARS_PER_SIDE = 12;
+const EQ_TOTAL_BARS = EQ_BARS_PER_SIDE * 2;
 const EQ_LEVELS = 7;
 
 const WEEKDAYS = [
@@ -112,7 +113,6 @@ const settings = {
   timeZoneOffsetHours: 0,
   showSeconds: false,
   showEqualizer: true,
-  eqBarHeight: 40,
   eqBarSpacing: 2,
   eqOffsetX: 20,
   eqOffsetY: 0,
@@ -178,19 +178,18 @@ function applySettings() {
     `${Math.round(getScaledValue(settings.smallSpaceWidth))}px`
   );
   document.documentElement.style.setProperty(
-    "--eq-bar-height",
-    `${Math.round(getScaledValue(settings.eqBarHeight))}px`
-  );
-  document.documentElement.style.setProperty(
     "--eq-bar-spacing",
     `${Math.round(getScaledValue(settings.eqBarSpacing))}px`
   );
 
+  const eqHeight = `${Math.round(getScaledValue(settings.digitHeight))}px`;
   if (eqLeft) {
     eqLeft.style.display = settings.showEqualizer ? "flex" : "none";
+    eqLeft.style.height = eqHeight;
   }
   if (eqRight) {
     eqRight.style.display = settings.showEqualizer ? "flex" : "none";
+    eqRight.style.height = eqHeight;
   }
 
   schedulePositionBackground();
@@ -335,13 +334,12 @@ function positionEq() {
   const scaledDateOffsetY = getScaledValue(settings.dateOffsetY);
   const scaledEqOffsetX = getScaledValue(settings.eqOffsetX);
   const scaledEqOffsetY = getScaledValue(settings.eqOffsetY);
-  const scaledBarHeight = getScaledValue(settings.eqBarHeight);
 
   const timerTop = Math.round(scaledPosY - scaledDigitHeight / 2);
   const timerBottom = timerTop + scaledDigitHeight;
   const dateTop = Math.round(timerBottom + scaledDateOffsetY);
   const eqBottom = Math.round(dateTop + scaledEqOffsetY);
-  const eqTop = Math.round(eqBottom - scaledBarHeight);
+  const eqTop = Math.round(eqBottom - scaledDigitHeight);
 
   const timerWidth = timer.getBoundingClientRect().width;
   const timerLeft = Math.round(scaledPosX - timerWidth / 2);
@@ -356,10 +354,10 @@ function positionEq() {
 }
 
 const EQ_DECAY = 0.85;
-const smoothLeftLevels = new Array(EQ_BAR_COUNT).fill(0);
-const smoothRightLevels = new Array(EQ_BAR_COUNT).fill(0);
-const currentLeftDisplayLevel = new Array(EQ_BAR_COUNT).fill(1);
-const currentRightDisplayLevel = new Array(EQ_BAR_COUNT).fill(1);
+const PEAK_DECAY = 0.97;
+const smoothLevels = new Array(EQ_TOTAL_BARS).fill(0);
+const currentDisplayLevel = new Array(EQ_TOTAL_BARS).fill(1);
+let runningPeak = 0;
 
 function amplitudeToSmooth(raw, prev) {
   const amplified = raw * settings.eqSensitivity;
@@ -374,28 +372,21 @@ function smoothToLevel(value) {
 }
 
 function updateEqBars() {
-  let changed = false;
-  for (let i = 0; i < EQ_BAR_COUNT; i++) {
-    const lLevel = smoothToLevel(smoothLeftLevels[i]);
-    const rLevel = smoothToLevel(smoothRightLevels[i]);
+  for (let i = 0; i < EQ_TOTAL_BARS; i++) {
+    const level = smoothToLevel(smoothLevels[i]);
+    if (level === currentDisplayLevel[i]) continue;
 
-    if (lLevel !== currentLeftDisplayLevel[i]) {
-      currentLeftDisplayLevel[i] = lLevel;
+    currentDisplayLevel[i] = level;
+    if (i < EQ_BARS_PER_SIDE) {
       if (eqLeftBars[i]) {
-        eqLeftBars[i].src = BAR_PATHS[lLevel];
+        eqLeftBars[i].src = BAR_PATHS[level];
       }
-      changed = true;
-    }
-    if (rLevel !== currentRightDisplayLevel[i]) {
-      currentRightDisplayLevel[i] = rLevel;
-      if (eqRightBars[i]) {
-        eqRightBars[i].src = BAR_PATHS[rLevel];
+    } else {
+      const ri = i - EQ_BARS_PER_SIDE;
+      if (eqRightBars[ri]) {
+        eqRightBars[ri].src = BAR_PATHS[level];
       }
-      changed = true;
     }
-  }
-  if (changed) {
-    schedulePositionEq();
   }
 }
 
@@ -409,22 +400,49 @@ function initAudioListener() {
       return;
     }
 
-    const binsPerBar = Math.floor(64 / EQ_BAR_COUNT);
+    const NOISE_FLOOR = 0.0005;
 
-    for (let i = 0; i < EQ_BAR_COUNT; i++) {
+    let framePeak = 0;
+    for (let i = 0; i < audioArray.length; i++) {
+      if (audioArray[i] > framePeak) {
+        framePeak = audioArray[i];
+      }
+    }
+
+    if (framePeak > runningPeak) {
+      runningPeak = framePeak;
+    } else {
+      runningPeak = runningPeak * PEAK_DECAY;
+    }
+
+    if (runningPeak < NOISE_FLOOR) {
+      for (let i = 0; i < EQ_TOTAL_BARS; i++) {
+        smoothLevels[i] = smoothLevels[i] * EQ_DECAY;
+      }
+      updateEqBars();
+      return;
+    }
+
+    const merged = new Array(64);
+    for (let i = 0; i < 64; i++) {
+      merged[i] = (audioArray[i] + audioArray[64 + i]) / 2;
+    }
+
+    const normFactor = 1 / runningPeak;
+    const binsPerBar = Math.floor(64 / EQ_TOTAL_BARS);
+
+    for (let i = 0; i < EQ_TOTAL_BARS; i++) {
       const start = i * binsPerBar;
-      const end = (i === EQ_BAR_COUNT - 1) ? 64 : start + binsPerBar;
+      const end = (i === EQ_TOTAL_BARS - 1) ? 64 : start + binsPerBar;
       const count = end - start;
 
-      let leftSum = 0;
-      let rightSum = 0;
+      let sum = 0;
       for (let j = start; j < end; j++) {
-        leftSum += audioArray[j];
-        rightSum += audioArray[64 + j];
+        sum += merged[j];
       }
 
-      smoothLeftLevels[i] = amplitudeToSmooth(leftSum / count, smoothLeftLevels[i]);
-      smoothRightLevels[i] = amplitudeToSmooth(rightSum / count, smoothRightLevels[i]);
+      const norm = (sum / count) * normFactor;
+      smoothLevels[i] = amplitudeToSmooth(norm, smoothLevels[i]);
     }
 
     updateEqBars();
@@ -672,9 +690,6 @@ window.wallpaperPropertyListener = {
     }
     if (properties.showEqualizer) {
       settings.showEqualizer = properties.showEqualizer.value;
-    }
-    if (properties.eqBarHeight) {
-      settings.eqBarHeight = Math.max(1, properties.eqBarHeight.value);
     }
     if (properties.eqBarSpacing) {
       settings.eqBarSpacing = Math.max(0, properties.eqBarSpacing.value);
