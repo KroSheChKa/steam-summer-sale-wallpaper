@@ -4,7 +4,7 @@
 	"file" : "index.html",
 	"general" : 
 	{
-		"fps" : 10,
+		"fps" : 30,
 		"properties" : 
 		{
 			"bgOffsetX" : 
@@ -180,6 +180,69 @@
 				"text" : "smallSpacing",
 				"type" : "slider",
 				"value" : 2
+			},
+			"showEqualizer" : 
+			{
+				"index" : 16,
+				"order" : 120,
+				"text" : "Show equalizer",
+				"type" : "bool",
+				"value" : true
+			},
+			"eqBarHeight" : 
+			{
+				"index" : 17,
+				"max" : 200,
+				"min" : 1,
+				"order" : 121,
+				"step" : 1,
+				"text" : "EQ bar height",
+				"type" : "slider",
+				"value" : 40
+			},
+			"eqBarSpacing" : 
+			{
+				"index" : 18,
+				"max" : 50,
+				"min" : 0,
+				"order" : 122,
+				"step" : 1,
+				"text" : "EQ bar spacing",
+				"type" : "slider",
+				"value" : 2
+			},
+			"eqOffsetX" : 
+			{
+				"index" : 19,
+				"max" : 500,
+				"min" : 0,
+				"order" : 123,
+				"step" : 1,
+				"text" : "EQ distance from timer",
+				"type" : "slider",
+				"value" : 20
+			},
+			"eqOffsetY" : 
+			{
+				"index" : 20,
+				"max" : 500,
+				"min" : -500,
+				"order" : 124,
+				"step" : 1,
+				"text" : "EQ vertical offset",
+				"type" : "slider",
+				"value" : 0
+			},
+			"eqSensitivity" : 
+			{
+				"index" : 21,
+				"max" : 20,
+				"min" : 1,
+				"order" : 125,
+				"step" : 1,
+				"text" : "EQ sensitivity",
+				"type" : "slider",
+				"value" : 5
 			}
 		}
 	},

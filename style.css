@@ -6,6 +6,8 @@
   --small-space-width: 6px;
   --bg-offset-x: 0px;
   --bg-offset-y: 0px;
+  --eq-bar-height: 40px;
+  --eq-bar-spacing: 2px;
 }
 
 * {
@@ -68,4 +70,21 @@ body {
   width: var(--small-space-width);
   height: var(--small-height);
   display: block;
+}
+
+.eq-group {
+  position: absolute;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--eq-bar-spacing);
+  pointer-events: none;
+}
+
+.eq-bar {
+  width: auto;
+  height: var(--eq-bar-height);
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
 }

@@ -53,6 +53,19 @@ const SMALL_LETTER_PATHS = {
   Z: "assets/small_upper_case_letters/Z.png",
 };
 
+const BAR_PATHS = {
+  1: "assets/spectrum_bars/1.png",
+  2: "assets/spectrum_bars/2.png",
+  3: "assets/spectrum_bars/3.png",
+  4: "assets/spectrum_bars/4.png",
+  5: "assets/spectrum_bars/5.png",
+  6: "assets/spectrum_bars/6.png",
+  7: "assets/spectrum_bars/7.png",
+};
+
+const EQ_BAR_COUNT = 7;
+const EQ_LEVELS = 7;
+
 const WEEKDAYS = [
   "SUNDAY",
   "MONDAY",
@@ -98,6 +111,12 @@ const settings = {
   useLocalTime: true,
   timeZoneOffsetHours: 0,
   showSeconds: false,
+  showEqualizer: true,
+  eqBarHeight: 40,
+  eqBarSpacing: 2,
+  eqOffsetX: 20,
+  eqOffsetY: 0,
+  eqSensitivity: 5,
 };
 
 const background = document.getElementById("background");
@@ -111,6 +130,10 @@ const s1 = document.getElementById("s1");
 const s2 = document.getElementById("s2");
 const timer = document.getElementById("timer");
 const dateContainer = document.getElementById("date");
+const eqLeft = document.getElementById("eq-left");
+const eqRight = document.getElementById("eq-right");
+const eqLeftBars = eqLeft ? Array.from(eqLeft.querySelectorAll(".eq-bar")) : [];
+const eqRightBars = eqRight ? Array.from(eqRight.querySelectorAll(".eq-bar")) : [];
 
 function getLayoutScale() {
   return window.innerHeight / BASE_VIEWPORT_HEIGHT;
@@ -154,10 +177,26 @@ function applySettings() {
     "--small-space-width",
     `${Math.round(getScaledValue(settings.smallSpaceWidth))}px`
   );
+  document.documentElement.style.setProperty(
+    "--eq-bar-height",
+    `${Math.round(getScaledValue(settings.eqBarHeight))}px`
+  );
+  document.documentElement.style.setProperty(
+    "--eq-bar-spacing",
+    `${Math.round(getScaledValue(settings.eqBarSpacing))}px`
+  );
+
+  if (eqLeft) {
+    eqLeft.style.display = settings.showEqualizer ? "flex" : "none";
+  }
+  if (eqRight) {
+    eqRight.style.display = settings.showEqualizer ? "flex" : "none";
+  }
 
   schedulePositionBackground();
   schedulePositionTimer();
   schedulePositionDate();
+  schedulePositionEq();
 }
 
 let positionRaf = null;
@@ -272,6 +311,128 @@ function positionDate() {
   dateContainer.style.left = `${left}px`;
   dateContainer.style.top = `${top}px`;
 }
+
+let eqRaf = null;
+
+function schedulePositionEq() {
+  if (eqRaf !== null) {
+    cancelAnimationFrame(eqRaf);
+  }
+  eqRaf = requestAnimationFrame(() => {
+    eqRaf = null;
+    positionEq();
+  });
+}
+
+function positionEq() {
+  if (!eqLeft || !eqRight || !settings.showEqualizer) {
+    return;
+  }
+
+  const scaledPosX = getScaledPosX();
+  const scaledPosY = getScaledPosY();
+  const scaledDigitHeight = getScaledValue(settings.digitHeight);
+  const scaledDateOffsetY = getScaledValue(settings.dateOffsetY);
+  const scaledEqOffsetX = getScaledValue(settings.eqOffsetX);
+  const scaledEqOffsetY = getScaledValue(settings.eqOffsetY);
+  const scaledBarHeight = getScaledValue(settings.eqBarHeight);
+
+  const timerTop = Math.round(scaledPosY - scaledDigitHeight / 2);
+  const timerBottom = timerTop + scaledDigitHeight;
+  const dateTop = Math.round(timerBottom + scaledDateOffsetY);
+  const eqBottom = Math.round(dateTop + scaledEqOffsetY);
+  const eqTop = Math.round(eqBottom - scaledBarHeight);
+
+  const timerWidth = timer.getBoundingClientRect().width;
+  const timerLeft = Math.round(scaledPosX - timerWidth / 2);
+  const timerRight = timerLeft + timerWidth;
+
+  const leftGroupWidth = eqLeft.getBoundingClientRect().width;
+  eqLeft.style.left = `${Math.round(timerLeft - scaledEqOffsetX - leftGroupWidth)}px`;
+  eqLeft.style.top = `${eqTop}px`;
+
+  eqRight.style.left = `${Math.round(timerRight + scaledEqOffsetX)}px`;
+  eqRight.style.top = `${eqTop}px`;
+}
+
+const EQ_DECAY = 0.85;
+const smoothLeftLevels = new Array(EQ_BAR_COUNT).fill(0);
+const smoothRightLevels = new Array(EQ_BAR_COUNT).fill(0);
+const currentLeftDisplayLevel = new Array(EQ_BAR_COUNT).fill(1);
+const currentRightDisplayLevel = new Array(EQ_BAR_COUNT).fill(1);
+
+function amplitudeToSmooth(raw, prev) {
+  const amplified = raw * settings.eqSensitivity;
+  const clamped = Math.max(0, Math.min(1, amplified));
+  return clamped > prev ? clamped : prev * EQ_DECAY;
+}
+
+function smoothToLevel(value) {
+  if (value <= 0.01) return 1;
+  const level = Math.ceil(value * EQ_LEVELS);
+  return Math.min(EQ_LEVELS, Math.max(1, level));
+}
+
+function updateEqBars() {
+  let changed = false;
+  for (let i = 0; i < EQ_BAR_COUNT; i++) {
+    const lLevel = smoothToLevel(smoothLeftLevels[i]);
+    const rLevel = smoothToLevel(smoothRightLevels[i]);
+
+    if (lLevel !== currentLeftDisplayLevel[i]) {
+      currentLeftDisplayLevel[i] = lLevel;
+      if (eqLeftBars[i]) {
+        eqLeftBars[i].src = BAR_PATHS[lLevel];
+      }
+      changed = true;
+    }
+    if (rLevel !== currentRightDisplayLevel[i]) {
+      currentRightDisplayLevel[i] = rLevel;
+      if (eqRightBars[i]) {
+        eqRightBars[i].src = BAR_PATHS[rLevel];
+      }
+      changed = true;
+    }
+  }
+  if (changed) {
+    schedulePositionEq();
+  }
+}
+
+function initAudioListener() {
+  if (typeof window.wallpaperRegisterAudioListener !== "function") {
+    return;
+  }
+
+  window.wallpaperRegisterAudioListener((audioArray) => {
+    if (!settings.showEqualizer) {
+      return;
+    }
+
+    const binsPerBar = Math.floor(64 / EQ_BAR_COUNT);
+
+    for (let i = 0; i < EQ_BAR_COUNT; i++) {
+      const start = i * binsPerBar;
+      const end = (i === EQ_BAR_COUNT - 1) ? 64 : start + binsPerBar;
+      const count = end - start;
+
+      let leftSum = 0;
+      let rightSum = 0;
+      for (let j = start; j < end; j++) {
+        leftSum += audioArray[j];
+        rightSum += audioArray[64 + j];
+      }
+
+      smoothLeftLevels[i] = amplitudeToSmooth(leftSum / count, smoothLeftLevels[i]);
+      smoothRightLevels[i] = amplitudeToSmooth(rightSum / count, smoothRightLevels[i]);
+    }
+
+    updateEqBars();
+  });
+}
+
+eqLeftBars.forEach((bar) => { bar.src = BAR_PATHS[1]; });
+eqRightBars.forEach((bar) => { bar.src = BAR_PATHS[1]; });
 
 function getCurrentDate() {
   if (settings.useLocalTime) {
@@ -509,6 +670,24 @@ window.wallpaperPropertyListener = {
     if (properties.showSeconds) {
       settings.showSeconds = properties.showSeconds.value;
     }
+    if (properties.showEqualizer) {
+      settings.showEqualizer = properties.showEqualizer.value;
+    }
+    if (properties.eqBarHeight) {
+      settings.eqBarHeight = Math.max(1, properties.eqBarHeight.value);
+    }
+    if (properties.eqBarSpacing) {
+      settings.eqBarSpacing = Math.max(0, properties.eqBarSpacing.value);
+    }
+    if (properties.eqOffsetX) {
+      settings.eqOffsetX = properties.eqOffsetX.value;
+    }
+    if (properties.eqOffsetY) {
+      settings.eqOffsetY = properties.eqOffsetY.value;
+    }
+    if (properties.eqSensitivity) {
+      settings.eqSensitivity = Math.max(1, properties.eqSensitivity.value);
+    }
 
     applySettings();
     updateTimer();
@@ -521,6 +700,7 @@ window.wallpaperPropertyListener = {
 applySettings();
 scheduleUpdates();
 startColonBlink();
+initAudioListener();
 
 [h1, h2, m1, m2, colon, colon2, s1, s2].forEach((img) => {
   if (!img) {
@@ -536,3 +716,4 @@ if (background) {
 window.addEventListener("resize", schedulePositionTimer);
 window.addEventListener("resize", schedulePositionDate);
 window.addEventListener("resize", schedulePositionBackground);
+window.addEventListener("resize", schedulePositionEq);
