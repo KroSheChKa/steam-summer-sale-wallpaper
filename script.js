@@ -390,10 +390,28 @@ function updateEqBars() {
   }
 }
 
+const PINK_NOISE = [
+  1.176,0.852,0.688,0.638,0.545,0.507,0.468,0.442,0.420,0.415,0.413,0.406,
+  0.399,0.382,0.383,0.375,0.366,0.376,0.398,0.394,0.379,0.394,0.385,0.391,
+  0.381,0.402,0.402,0.400,0.398,0.511,0.662,0.663,0.742,0.746,0.848,0.857,
+  0.964,0.998,1.063,1.106,1.182,1.257,1.323,1.374,1.495,1.531,1.619,1.709,
+  1.771,1.849,1.924,2.014,2.079,2.158,2.220,2.266,2.321,2.357,2.399,2.404,
+  2.428,2.392,2.403,2.361
+];
+
+let audioListenerRegistered = false;
+
 function initAudioListener() {
-  if (typeof window.wallpaperRegisterAudioListener !== "function") {
+  if (audioListenerRegistered) {
     return;
   }
+
+  if (!window.wallpaperRegisterAudioListener) {
+    setTimeout(initAudioListener, 500);
+    return;
+  }
+
+  audioListenerRegistered = true;
 
   window.wallpaperRegisterAudioListener((audioArray) => {
     if (!settings.showEqualizer) {
@@ -425,7 +443,7 @@ function initAudioListener() {
 
     const merged = new Array(64);
     for (let i = 0; i < 64; i++) {
-      merged[i] = (audioArray[i] + audioArray[64 + i]) / 2;
+      merged[i] = ((audioArray[i] + audioArray[64 + i]) / 2) / PINK_NOISE[i];
     }
 
     const normFactor = 1 / runningPeak;

@@ -28,6 +28,8 @@ Steam workshop (Wallpaper engine) - https://steamcommunity.com/sharedfiles/filed
 - [x] Pixel-perfect background scaling from original GIF
 - [x] Auto-relative layout scaling from the `3440x1440` reference setup
 - [x] Audio spectrum equalizer (12+12 unified mono bars with running peak normalization)
+- [x] Pink noise frequency calibration for balanced EQ response
+- [x] Resilient audio API init (retry on delayed WE injection)
 
 ## Ideas / To do
 - [ ] Add color variants for the glyph set
