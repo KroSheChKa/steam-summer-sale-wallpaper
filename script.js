@@ -400,6 +400,9 @@ const PINK_NOISE = [
 ];
 
 let audioListenerRegistered = false;
+let lastAudioCallbackTime = 0;
+const AUDIO_HEALTH_INTERVAL = 5000;
+const AUDIO_STALE_THRESHOLD = 3000;
 
 function initAudioListener() {
   if (audioListenerRegistered) {
@@ -414,6 +417,8 @@ function initAudioListener() {
   audioListenerRegistered = true;
 
   window.wallpaperRegisterAudioListener((audioArray) => {
+    lastAudioCallbackTime = Date.now();
+
     if (!settings.showEqualizer) {
       return;
     }
@@ -466,6 +471,40 @@ function initAudioListener() {
     updateEqBars();
   });
 }
+
+function resetAudioState() {
+  for (let i = 0; i < EQ_TOTAL_BARS; i++) {
+    smoothLevels[i] = 0;
+    currentDisplayLevel[i] = 1;
+  }
+  runningPeak = 0;
+  eqLeftBars.forEach((bar) => { bar.src = BAR_PATHS[1]; });
+  eqRightBars.forEach((bar) => { bar.src = BAR_PATHS[1]; });
+}
+
+function tryReRegisterAudio() {
+  audioListenerRegistered = false;
+  initAudioListener();
+}
+
+setInterval(() => {
+  if (!audioListenerRegistered || !settings.showEqualizer) {
+    return;
+  }
+  if (lastAudioCallbackTime > 0 && Date.now() - lastAudioCallbackTime > AUDIO_STALE_THRESHOLD) {
+    resetAudioState();
+    tryReRegisterAudio();
+  }
+}, AUDIO_HEALTH_INTERVAL);
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    resetAudioState();
+    if (!audioListenerRegistered) {
+      initAudioListener();
+    }
+  }
+});
 
 eqLeftBars.forEach((bar) => { bar.src = BAR_PATHS[1]; });
 eqRightBars.forEach((bar) => { bar.src = BAR_PATHS[1]; });
