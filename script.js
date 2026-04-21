@@ -113,10 +113,10 @@ const settings = {
   timeZoneOffsetHours: 0,
   showSeconds: false,
   showEqualizer: true,
-  eqBarSpacing: 2,
-  eqOffsetX: 20,
-  eqOffsetY: 0,
-  eqSensitivity: 5,
+  eqBarSpacing: 1,
+  eqOffsetX: 67,
+  eqOffsetY: 40,
+  eqSensitivity: 2,
 };
 
 const background = document.getElementById("background");

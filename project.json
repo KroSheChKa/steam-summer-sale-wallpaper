@@ -198,7 +198,7 @@
 				"step" : 1,
 				"text" : "EQ bar spacing",
 				"type" : "slider",
-				"value" : 2
+				"value" : 1
 			},
 			"eqOffsetX" : 
 			{
@@ -209,7 +209,7 @@
 				"step" : 1,
 				"text" : "EQ distance from timer",
 				"type" : "slider",
-				"value" : 20
+				"value" : 67
 			},
 			"eqOffsetY" : 
 			{
@@ -220,7 +220,7 @@
 				"step" : 1,
 				"text" : "EQ vertical offset",
 				"type" : "slider",
-				"value" : 0
+				"value" : 40
 			},
 			"eqSensitivity" : 
 			{
@@ -231,7 +231,7 @@
 				"step" : 1,
 				"text" : "EQ sensitivity",
 				"type" : "slider",
-				"value" : 5
+				"value" : 2
 			}
 		}
 	},
